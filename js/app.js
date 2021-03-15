@@ -1,7 +1,6 @@
 // array alle kaarten
 let card = document.getElementsByClassName("card");
 let cards = ["bx-microchip", "bx-hdd", "bx-fingerprint", "bx-memory-card", "bx-tv", "bx-mobile", "bx-printer", "bx-joystick-alt", "bx-microchip", "bx-hdd", "bx-fingerprint", "bx-memory-card", "bx-tv", "bx-mobile", "bx-printer", "bx-joystick-alt"];
-
 // alle kaarten op het deck
 const deck = document.getElementById("card-deck");
 
@@ -27,6 +26,7 @@ document.body.onload = startGame();
 function startGame() {
     // open kaarten array leeghalen
     openedCards = [];
+    matchedCards = [];
 
     // shuffle deck
     shuffle(cards);
@@ -36,6 +36,7 @@ function startGame() {
         html += `<li class="card">
             <i class='bx ${item}'></i>
             </li>`;
+            $(cards).removeClass("show", "open", "match", "disabled");
     });
 
     document.getElementById("card-deck").innerHTML = html;
@@ -62,33 +63,36 @@ function startGame() {
     function cardOpen(card) {
         console.log(card)
         openedCards.push(card);
-        var len = openedCards.length;
+        let len = openedCards.length;
         if(len === 2){
             if(openedCards[0].type === openedCards[1].type){
                 matched();
+                console.log("match");
             } else {
                 unmatched();
+                console.log("unmatch");
             }
         }
     };
     function matched(){
-        openedCards[0].addClass("match", "disabled");
-        openedCards[1].addClass("match", "disabled");
-        openedCards[0].removeClass("show", "open", "no-event");
-        openedCards[1].removeClass("show", "open", "no-event");
+        $(openedCards[0]).addClass("match disabled");
+        $(openedCards[1]).addClass("match", "disabled");
+        $(openedCards[0]).removeClass("show", "open", "no-event");
+        $(openedCards[1]).removeClass("show", "open", "no-event");
+        matchedCards.push(openedCards[0]);
+        matchedCards.push(openedCards[1]);
+        console.log(matched);
         openedCards = [];
     }
     
     
     // description when cards don't match
     function unmatched(){
-        openedCards[0].classList.add("unmatched");
-        openedCards[1].classList.add("unmatched");
-        disable();
+        $(openedCards[0]).addClass("unmatched");
+        $(openedCards[1]).addClass("unmatched");
         setTimeout(function(){
-            openedCards[0].removeClass("show", "open", "no-event","unmatched");
-            openedCards[1].removeClass("show", "open", "no-event","unmatched");
-            enable();
+            $(openedCards[0]).removeClass("show", "open", "no-event","unmatched");
+            $(openedCards[1]).removeClass("show", "open", "no-event","unmatched");
             openedCards = [];
         },1100);
     }
