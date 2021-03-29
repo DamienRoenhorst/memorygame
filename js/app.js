@@ -1,9 +1,11 @@
 // array alle kaarten
-let card = document.getElementsByClassName("card");
+let card = $(".card");
 let cards = ["bx-microchip", "bx-hdd", "bx-fingerprint", "bx-memory-card", "bx-tv", "bx-mobile", "bx-printer", "bx-joystick-alt", "bx-microchip", "bx-hdd", "bx-fingerprint", "bx-memory-card", "bx-tv", "bx-mobile", "bx-printer", "bx-joystick-alt"];
+let cardsMatch = [];
 // alle kaarten op het deck
-const deck = document.getElementById("card-deck");
+const deck = $("#card-deck");
 
+// randomized de kaarten
 function shuffle(array) {
     let huidigKaart = array.length, tijdelijkeWaarde, randomKaart;
 
@@ -20,15 +22,15 @@ function shuffle(array) {
 
 
 // kaarten schudden en spel starten
-document.body.onload = startGame();
+$(document).ready(startGame());
 
 // nieuw spel starten
 function startGame() {
-    // open kaarten array leeghalen
+    // arrays leeghalen voor het begin vd spel
     openedCards = [];
     matchedCards = [];
 
-    // shuffle deck
+    // shuffle de kaarten
     shuffle(cards);
 
     let html = "";
@@ -36,20 +38,13 @@ function startGame() {
         html += `<li class="card">
             <i class='bx ${item}'></i>
             </li>`;
-            $(cards).removeClass("show open match disabled");
+        $(cards).removeClass("show open match disabled");
     });
 
-    document.getElementById("card-deck").innerHTML = html;
+    $("#card-deck").html(html);
 
-    // toggled de classes 
-    // let displayCard = function () {
-    //     this.classList.toggle("open");
-    //     this.classList.toggle("show");
-    //     this.classList.toggle("disabled");
-    // };
-
-    $("ul").on('click', 'li', function(){
-        if(!$(this).hasClass("open") && !$(this).hasClass("match") && !$(this).hasClass('disabled') && openedCards.length <=1){
+    $("ul").on('click', 'li', function () {
+        if (!$(this).hasClass("open") && !$(this).hasClass("match") && !$(this).hasClass('disabled') && openedCards.length <= 1) {
             //displayCard(this)
             $(this).addClass("open");
             console.log(this);
@@ -60,14 +55,14 @@ function startGame() {
 
     })
 
-
+    // controleren of kaarten overeenkomen
     function cardOpen(card) {
         console.log(card)
         openedCards.push(card);
         let len = openedCards.length;
         //console.log(openedCards);
-        if(len === 2){
-            if(openedCards[0] === openedCards[1]){
+        if (len === 2) {
+            if (openedCards[0] === openedCards[1]) {
                 matched();
                 console.log("match");
             } else {
@@ -76,24 +71,36 @@ function startGame() {
             }
         }
     };
-    function matched(){
+
+    // als kaarten overeenkomen
+    function matched() {
         $(".open").addClass("match");
-        
-        setTimeout(function(){
-           $(".open").removeClass("unmatched open disabled");
-           openedCards = [];
-        },2000);
+
+        setTimeout(function () {
+            $(".open").removeClass("unmatched open disabled");
+            cardsMatch.push(openedCards[0]);
+            cardsMatch.push(openedCards[1]);
+            if (cardsMatch.length == 16) {
+                allmatched();
+            };
+            openedCards = [];
+        }, 2000);
     }
-    
-    
-    // description when cards don't match
-    function unmatched(){
+
+
+    // als kaarten niet overeenkomen
+    function unmatched() {
         $(".open").addClass("unmatched");
-        
-        setTimeout(function(){
-           $(".open").removeClass("unmatched show open disabled");
-           openedCards = [];
-        },2000);
-    
+
+        setTimeout(function () {
+            $(".open").removeClass("unmatched show open disabled");
+            openedCards = [];
+        }, 2000);
+
     }
-        };
+
+    // alle kaarten zijn gematched
+    function allmatched() {
+        console.log("Alle kaarten matchen");
+    }
+};
